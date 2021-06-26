@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do App</title>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <div class="todo-container">
+      <div class="add-task">
+        <input type="text" autofocus />
+        <span class="add" role="button">+</span>
+      </div>
+
+      <div class="tasks-box">
+        <span class="no-tasks-message">No Tasks to Show</span>
+      </div>
+
+      <div class="tasks-stats">
+        <div class="tasks-counter">
+          Tasks: <span>0</span>
+        </div>
+        
+        <div class="completed-tasks">
+          Completed: <span>0</span>
+        </div>
+      </div>
+
+      <div class="tasks-controls">
+        <button class="complete-all">Complete All</button>
+        <button class="delete-all">Delete all</button>
+      </div>
+    </div>
+
+    <script src="js/sweetalert.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
