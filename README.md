@@ -4,7 +4,7 @@
 
 ## Live Site
 
-- Live Site [URL](https://mhmd-tarek-mhmd.github.io/To-Do-MVC-App)
+- Live Site [URL](https://mhmd-tarek-mhmd.github.io/To-Do-App-List)
 
 ## Screenshots
 
