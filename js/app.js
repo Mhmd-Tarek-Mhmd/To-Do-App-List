@@ -1,161 +1,216 @@
-/* Global Variables */
-const myInput = document.querySelector('.todo-container .add-task input'),
-      tasksContainer = document.querySelector('.todo-container .tasks-box'),
-      noTasksMsg = document.querySelector('.todo-container .tasks-box .no-tasks-message');
+const $ = document.querySelector.bind(document);
+const $$ = document.querySelectorAll.bind(document);
 
+(function () {
+  const Model = {
+    tasks: {},
+  };
 
-/* Helper Functions */
-function getFromStorage() {
-  Object.keys(localStorage).forEach(key => {
-    key.slice(0, 4) === 'task' && addTask(localStorage[key], key);
-  });
-}
-function removeFromStorage() {
-  localStorage.removeItem('completed');
-  Object.keys(localStorage).forEach(key => key.slice(0, 4) === 'task' && localStorage.removeItem(key));
-}
+  const Controller = {
+    createTask: (taskContent) => {
+      const AllContent = Controller.getTasks().map((task) => task.taskContent);
+      let task = {
+        id: Date.now(),
+        taskContent,
+        completed: false,
+      };
 
-function addClass(targets, className='active') {
-  targets.forEach(target => target.classList.add(className));
-}
-function removeClass(targets, className='active') {
-  targets.forEach(target => target.classList.remove(className));
-}
+      // Check if the task is already exists
+      AllContent.forEach((content) => {
+        if (content == taskContent) {
+          Helpers.showDialog(true);
+          task = false;
+        }
+      });
+      return task;
+    },
+    getTasks: () => Object.values(Model.tasks),
+    updateLocalStorage: (tasks = Model.tasks) =>
+      localStorage.setItem("tasks", JSON.stringify(tasks)),
 
-function tasksCounter() {
-  const tasksControls = document.querySelectorAll('.todo-container .tasks-controls button'),
-        spanCounter = document.querySelector('.todo-container .tasks-stats .tasks-counter span');
+    addTask: function (taskContent) {
+      let task = this.createTask(taskContent);
 
-  spanCounter.textContent = document.querySelectorAll('.todo-container .tasks-box .task').length;
-  if (spanCounter.textContent == 0) {
-    tasksContainer.appendChild(noTasksMsg);
-    removeClass(tasksControls);
-  }
-  else {
-    addClass(tasksControls);
-  }
-}
-function completedTasksCounter() {
-  const completeAllBtn = document.querySelector('.todo-container .tasks-controls .complete-all'),
-        completedSpanCounter = document.querySelector('.todo-container .tasks-stats .completed-tasks span');
+      if (task != false) {
+        Model.tasks[task.id] = task;
+        this.updateLocalStorage();
+        Views.render.add(task);
+      }
+    },
+    removeTask: function (taskID) {
+      delete Model.tasks[taskID];
+      this.updateLocalStorage();
+      Views.render.remove(taskID);
+    },
+    toggleTask: function (taskID) {
+      Model.tasks[taskID].completed = !Model.tasks[taskID].completed;
+      this.updateLocalStorage();
+      Views.render.toggle(taskID);
+    },
 
-  completedSpanCounter.textContent = document.querySelectorAll('.todo-container .tasks-box .task.completed').length;
-  completedSpanCounter.textContent === document.querySelector('.todo-container .tasks-stats .tasks-counter span').textContent
-    ? completeAllBtn.classList.remove('active')
-    : completeAllBtn.classList.add('active');  
-}
+    removeAll: function () {
+      Model.tasks = {};
+      localStorage.removeItem("tasks");
+      Views.render.removeAll();
+      return Model.tasks;
+    },
+    completeAll: function () {
+      Controller.getTasks().forEach(
+        (task) => (Model.tasks[task.id].completed = true)
+      );
+      Controller.updateLocalStorage();
+      Views.render.completeAll();
+      return Model.tasks;
+    },
 
-function removeAll() {
-  document.querySelectorAll('.todo-container .tasks-box .task').forEach(ele => ele.remove());
-  completedTasksCounter();
-  tasksCounter();
-  removeFromStorage();
-}
-function completeAll(e) {
-  addClass(document.querySelectorAll('.todo-container .tasks-box .task'), 'completed');
-  e.classList.remove('active');
-  completedTasksCounter();
+    init: function () {
+      if (localStorage.tasks) {
+        Model.tasks = JSON.parse(localStorage.tasks);
+      }
+      Views.init();
+    },
+  };
 
-  let completedStorage = [];
-  document.querySelectorAll('.tasks-box .task.completed').forEach(task => {
-    completedStorage.push(task.textContent.substr(6));
-    localStorage.setItem('completed', completedStorage);
-  });
-}
+  const Views = {
+    init: function () {
+      // [1] Add Task action
+      const input = $(".controls input");
+      const add = (e) => {
+        e.preventDefault();
+        input.value ? Controller.addTask(input.value) : Helpers.showDialog();
+        input.value = "";
+      };
+      $(".controls .add-task").addEventListener("click", add);
+      input.addEventListener("keydown", (e) => e.keyCode == 13 && add(e));
 
-function addTask(value, key='') {
-  const mainDiv = document.createElement('div'),
-        deleteButton = document.createElement('span');
+      // [2] Adding all Tasks
+      const tasks = Controller.getTasks();
+      tasks.length
+        ? tasks.forEach((task) => this.render.add(task))
+        : Helpers.addMsgTemplate();
 
-  // Adding the delete button to the mainDiv
-  deleteButton.appendChild(document.createTextNode('Delete'));
-  deleteButton.className = 'delete';
-  mainDiv.appendChild(deleteButton);
+      // [3] Handle App stats
+      Helpers.updateUI();
+      $(".stats .complete-all").onclick = Controller.completeAll;
+      $(".stats .delete-all").onclick = Controller.removeAll;
+    },
 
-  // Adding the mainDiv to the tasksContainer & to the localStorage
-  mainDiv.appendChild(document.createTextNode(value));
-  mainDiv.className = 'task';
-  noTasksMsg.remove();
-  tasksContainer.appendChild(mainDiv);
-  mainDiv.dataset.storageKey = key;
-  localStorage.completed !== undefined && localStorage.completed.split(',').forEach(val => val === localStorage[key] && mainDiv.classList.add('completed'));
+    render: {
+      add: function (task) {
+        $(".tasks .no-tasks") && $(".tasks .no-tasks").remove();
+        $(".tasks").innerHTML += Helpers.taskTemplate(
+          task.id,
+          task.taskContent
+        );
 
-  // Final touch
-  myInput.focus();
-  tasksCounter();
-  completedTasksCounter();
-}
+        $$(".tasks .task").forEach((ele) => {
+          Helpers.setTaskActions(ele);
+          task.completed && ele.classList.add("completed");
+        });
 
-const handleAdding = () => {
-  let adding = true,
-      taskText = myInput.value;
+        Helpers.updateUI();
+      },
 
-  // Check if the input field is empty
-  if (taskText === '') {
-    swal('Please add the task', '', 'error'); // Sweet Alert
-    adding = false;
-    myInput.focus();
-  }
+      remove: function (taskID) {
+        $$(".tasks > .task").forEach(
+          (ele) => ele.getAttribute("data-id") == taskID && ele.remove()
+        );
 
-  // Check if the task contains ","
-  if (taskText.match(',')) {
-    swal('Task value can\'t contains ","', '', 'warning');
-    adding = false;
-    myInput.focus();
-  }
+        $(".tasks").childElementCount === 0 && Helpers.addMsgTemplate();
+        Helpers.updateUI();
+      },
 
-  // Check if the task is already exist
-  document.querySelectorAll('.todo-container .tasks-box .task').forEach(text => {
-    if (taskText === text.textContent.substr(6)) {
-      swal('This Task is already exist', '', 'warning');
-      adding = false;
-      myInput.focus();
-    }
-  });
+      toggle: function (taskID) {
+        $(`.task[data-id="${taskID}"]`).classList.toggle("completed");
+        Helpers.updateUI();
+      },
 
-  // Check if any warning exist
-  if (document.querySelector('.swal-overlay--show-modal') !== null) {
-    adding = false;
-    document.querySelector('.swal-overlay--show-modal button').focus();
-  }
+      completeAll: function () {
+        $$(".tasks > *").forEach((ele) => ele.classList.add("completed"));
+        Helpers.updateUI();
+      },
 
-  // Adding the tasks
-  if (adding) {
-    addTask(taskText);
-    myInput.value = '';
-    tasksContainer.lastElementChild.dataset.storageKey = `task${Math.floor(Math.random() * 100000000000000)}`;
-    localStorage.setItem(tasksContainer.lastElementChild.dataset.storageKey, taskText);
-  }
-};
+      removeAll: function () {
+        $$(".tasks > *").forEach((ele) => ele.remove());
+        Helpers.addMsgTemplate();
+        Helpers.updateUI();
+      },
+    },
+  };
 
+  const Helpers = {
+    addMsgTemplate: () => ($(".tasks").innerHTML = $("#msg").innerHTML),
 
-/* Events to add & delete & complete Tasks */
+    taskTemplate: function (taskID, taskContent) {
+      let task = $('script[data-template="task"]').innerHTML;
 
-// [1] Adding Tasks
-window.onload = getFromStorage;
-myInput.onkeyup = (e) => {e.keyCode === 13 && handleAdding()}
-document.querySelector('.todo-container .add-task .add').onclick = handleAdding;
+      task = task
+        .replace("{{taskID}}", taskID)
+        .replace(/{{taskContent}}/g, taskContent);
 
+      return task;
+    },
 
-document.addEventListener('click', (e) => {
-  // [2] Deleting Tasks
-  if (e.target.className == 'delete') {
-    localStorage.removeItem(e.target.parentNode.dataset.storageKey);
-    e.target.parentNode.remove();
-    tasksCounter();
-    completedTasksCounter();
-  }
+    setTaskActions: function (ele) {
+      const actions = (e) => {
+        e.target.classList.contains("delete-task")
+          ? // [1] Delete Action
+            Controller.removeTask(
+              e.target.parentElement.getAttribute("data-id")
+            )
+          : // [2] Complete Action
+            Controller.toggleTask(e.target.getAttribute("data-id"));
+      };
 
-  // [3] Completing Tasks
-  if (e.target.classList.contains('task')) {
-    e.target.classList.toggle('completed');
-    localStorage.removeItem('completed');
-    completedTasksCounter();
-    
-    let completedStorage = [];
-    document.querySelectorAll('.tasks-box .task.completed').forEach(task => {
-      completedStorage.push(task.textContent.substr(6));
-      localStorage.setItem('completed', completedStorage);
-    });
-  }
-});
+      ele.addEventListener("click", actions);
+      ele.addEventListener("keydown", (e) => {
+        e.key === "Enter" && e.keyCode === 13 && actions();
+      });
+    },
+
+    showDialog: function (repeatedTask = false) {
+      const dialog = $("#dialog");
+      const dialogLabel = $("#label");
+      let msg;
+
+      msg = repeatedTask
+        ? "This task is already exists"
+        : "Enter a valid value";
+
+      dialogLabel.innerHTML = msg;
+      dialog.classList.remove("hide");
+      $("#dialog button").focus();
+
+      dialog.onclick = () => dialog.classList.add("hide");
+      dialog.onkeydown = (e) => {
+        e.keyCode === 9 && e.preventDefault();
+        e.keyCode === 27 && dialog.classList.add("hide");
+      };
+    },
+
+    updateUI: () => {
+      const completed = $(".stats .completed-tasks span");
+      const tasksCounter = $(".stats .tasks-counter span");
+      const statsBtns = $$(".stats button");
+      const tasks = Controller.getTasks();
+      const completedTasks = tasks.filter((task) => task.completed == true);
+      const disabled = (ele) => {
+        ele.tabIndex = -1;
+        ele.classList.add("disabled");
+      };
+      const enabled = (ele) => {
+        ele.tabIndex = 0;
+        ele.classList.remove("disabled");
+      };
+
+      tasksCounter.innerHTML = tasks.length;
+      completed.innerHTML = completedTasks.length;
+
+      tasks.length ? statsBtns.forEach(enabled) : statsBtns.forEach(disabled);
+      completedTasks.length == tasks.length &&
+        disabled($(".stats .complete-all"));
+    },
+  };
+
+  Controller.init();
+})();
