@@ -1,4 +1,4 @@
-# To Do MVC App
+# MVC Todos App
 
 - To Do App with local storage made by MVC JavaScript.
 
