@@ -1,0 +1,34 @@
+.Header,
+.ThemeToggler {
+  will-change: background-image;
+  transition: background-image 0.3s;
+}
+
+.Header {
+  height: 300px;
+  padding-top: 78px;
+  background-image: var(--header-image);
+}
+
+.Logo {
+  color: white;
+  letter-spacing: 10px;
+  text-transform: uppercase;
+}
+
+.ThemeToggler {
+  width: 26px;
+  height: 26px;
+  background-image: var(--theme-toggler-image);
+}
+
+@media (max-width: 767px) {
+  .Header {
+    height: 200px;
+    padding-top: 48px;
+  }
+
+  .Logo {
+    font-size: 1.7em;
+  }
+}
