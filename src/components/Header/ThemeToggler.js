@@ -25,7 +25,7 @@ function ThemeToggler() {
 
   return (
     <button
-      aria-label="Theme toggler"
+      aria-label={`Switch to ${theme === "LIGHT" ? "dark" : "light"} mode`}
       className={styles.ThemeToggler}
       onClick={handleToggleTheme}
     ></button>
