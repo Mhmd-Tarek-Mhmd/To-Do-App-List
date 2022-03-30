@@ -1,6 +1,6 @@
 import React from "react";
 
-import * as styles from "./todos.module.css";
+import styles from "./todos.module.css";
 import TodoCheck from "./TodoCheck";
 
 export default function Todo({ todo, removeTodo, toggleTodo, index, swap }) {

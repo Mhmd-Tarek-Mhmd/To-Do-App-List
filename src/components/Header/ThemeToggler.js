@@ -1,6 +1,6 @@
 import React from "react";
 
-import * as styles from "./header.module.css";
+import styles from "./header.module.css";
 
 function ThemeToggler() {
   const [theme, setTheme] = React.useState("LIGHT");

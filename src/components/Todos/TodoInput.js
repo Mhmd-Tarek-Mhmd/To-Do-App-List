@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import * as styles from "./todos.module.css";
+import styles from "./todos.module.css";
 import TodoCheck from "./TodoCheck";
 
 function TodoInput({ todosValidation, addTodo }) {

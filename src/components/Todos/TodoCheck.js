@@ -1,6 +1,6 @@
 import React from "react";
 
-import * as styles from "./todos.module.css";
+import styles from "./todos.module.css";
 
 function TodoCheck({ ariaChecked, ariaLabel, handleClick, handleKeydown }) {
   return (

@@ -1,6 +1,6 @@
 import React from "react";
 
-import * as styles from "./todos.module.css";
+import styles from "./todos.module.css";
 import Todo from "./Todo";
 import TodoInput from "./TodoInput";
 
