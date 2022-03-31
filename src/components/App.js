@@ -1,7 +1,7 @@
 import React from "react";
 
-import Header from "./Header";
-import Main from "./Main";
+import Header from "./layouts/Header";
+import Main from "./layouts/Main";
 
 function App() {
   const [todos, setTodos] = React.useState([]);

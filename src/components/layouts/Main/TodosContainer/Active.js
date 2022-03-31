@@ -1,6 +1,6 @@
 import React from "react";
 
-import Todos from "../../Todos";
+import Todos from "../../../Todos";
 import Controls from "../Controls";
 
 function Active({
