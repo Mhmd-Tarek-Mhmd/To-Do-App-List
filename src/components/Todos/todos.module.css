@@ -86,15 +86,22 @@
 .TodoInput {
   margin-bottom: 24px;
 }
+.TodoInput input {
+  caret-color: var(--blue);
+}
 @media (max-width: 767px) {
   .TodoInput {
     height: 48px;
     margin-bottom: 16px;
   }
+  .TodoInput input {
+    width: calc(100% - 22px - 20px);
+  }
 }
-.TodoInput input {
-  flex: 1;
-  caret-color: var(--blue);
+@media (max-width: 374px) {
+  .TodoInput ::placeholder {
+    font-size: 14px
+  }
 }
 
 /*
