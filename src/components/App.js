@@ -5,7 +5,7 @@ import Main from "./Main";
 
 function App() {
   const [todos, setTodos] = React.useState([]);
-  const [todosValidation, setTodosValidation] = React.useState(false);
+  const [todosValidation, setTodosValidation] = React.useState(true);
 
   React.useEffect(() => {
     localStorage.reactTodos &&
