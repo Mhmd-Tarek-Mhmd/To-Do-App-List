@@ -89,7 +89,7 @@ html.dark {
   --theme-toggler-image: url(images/icon-sun.svg);
 }
 
-@media (max-width: 375px) {
+@media (max-width: 500px) {
   html {
     --header-image: url(images/bg-mobile-light.jpg);
   }

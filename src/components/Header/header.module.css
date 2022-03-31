@@ -7,6 +7,7 @@
 .Header {
   height: 300px;
   padding-top: 78px;
+  background-size: 100% 100%;
   background-image: var(--header-image);
 }
 
