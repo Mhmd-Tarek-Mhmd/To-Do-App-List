@@ -68,7 +68,7 @@ function TodoInput({ todosValidation, addTodo }) {
         onKeyDown={(e) => e.keyCode === 13 && handleAddTodo(todoContent)}
       />
 
-      {!todosValidation && <div className={styles.errorMsg}>{errorMsg}</div>}
+      {!todosValidation && <div role="alert" className={styles.errorMsg}>{errorMsg}</div>}
     </div>
   );
 }
