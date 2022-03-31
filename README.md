@@ -4,7 +4,7 @@ This is a solution to the [Todo app challenge on Frontend Mentor](https://www.fr
 
 ## Links
 
-- Live Site [URL](https://serene-lovelace-4d11cf.netlify.app)
+- Live Site [URL](https://todos-react-pwa.netlify.app)
 - Solution [URL](https://www.frontendmentor.io/solutions/react-todos-app-6gxAj7JvV)
 
 - MVC App [URL](https://github.com/Mhmd-Tarek-Mhmd/Todos-App/tree/mvc-app)
