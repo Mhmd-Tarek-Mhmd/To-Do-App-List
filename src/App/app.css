@@ -87,7 +87,6 @@ html {
   --separator-color: hsl(236, 33%, 92%);
 
   --header-image: url(images/bg-desktop-light.jpg);
-  --theme-toggler-image: url(images/icon-moon.svg);
 }
 
 html.dark {
@@ -102,7 +101,6 @@ html.dark {
   --separator-color: hsl(233, 14%, 35%);
 
   --header-image: url(images/bg-desktop-dark.jpg);
-  --theme-toggler-image: url(images/icon-sun.svg);
 }
 
 @media (max-width: 500px) {

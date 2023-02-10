@@ -20,7 +20,6 @@
 .ThemeToggler {
   width: 26px;
   height: 26px;
-  background-image: var(--theme-toggler-image);
 }
 
 @media (max-width: 767px) {
