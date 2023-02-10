@@ -68,7 +68,7 @@ body {
   will-change: background-color;
   transition: background-color 0.3s;
   background-color: var(--body-bg);
-  font: 400 18px "Josefin Sans", sans-serif;
+  font: 400 18px/1 "Josefin Sans";
 }
 
 /*
