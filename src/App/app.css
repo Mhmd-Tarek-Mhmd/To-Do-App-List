@@ -10,7 +10,7 @@
 
 html,
 body,
-#app {
+#root {
   min-height: 100vh;
 }
 
@@ -24,6 +24,22 @@ input {
 
 input:focus {
   outline: none;
+}
+
+::-webkit-input-placeholder {
+  color: inherit;
+}
+
+::-moz-placeholder {
+  color: inherit;
+}
+
+:-ms-input-placeholder {
+  color: inherit;
+}
+
+::-ms-input-placeholder {
+  color: inherit;
 }
 
 ::placeholder {

@@ -1,9 +1,9 @@
 import React from "react";
 
-import Todos from "../../../Todos";
+import Todos from "../Todos";
 import Controls from "../Controls";
 
-function All({
+function Completed({
   todos,
   todosValidation,
   addTodo,
@@ -12,12 +12,15 @@ function All({
   swap,
   filterTodos,
 }) {
-  const handleFilterTodos = () => filterTodos([]);
+  const completedTodos = todos.filter((todo) => todo.completed);
+
+  const handleFilterTodos = () =>
+    filterTodos(todos.filter((todo) => !todo.completed));
 
   return (
     <div className="container">
       <Todos
-        todos={todos}
+        todos={completedTodos}
         todosValidation={todosValidation}
         addTodo={addTodo}
         removeTodo={removeTodo}
@@ -26,12 +29,12 @@ function All({
       />
 
       <Controls
-        todos={todos}
+        todos={completedTodos}
         handleFilterTodos={handleFilterTodos}
-        btnTitle="Clear All"
+        btnTitle="Clear Completed"
       />
     </div>
   );
 }
 
-export default All;
+export default Completed;

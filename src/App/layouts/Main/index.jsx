@@ -2,9 +2,9 @@ import React from "react";
 import { Routes, Route, Link } from "react-router-dom";
 
 import styles from "./main.module.css";
-import All from "./TodosContainer/All";
-import Active from "./TodosContainer/Active";
-import Completed from "./TodosContainer/Completed";
+import All from "../../components/TodosContainer/All";
+import Active from "../../components/TodosContainer/Active";
+import Completed from "../../components/TodosContainer/Completed";
 import Note from "./Note";
 
 function Main({

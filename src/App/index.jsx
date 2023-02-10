@@ -1,5 +1,6 @@
 import React from "react";
 
+import "./app.css";
 import Header from "./layouts/Header";
 import Main from "./layouts/Main";
 
