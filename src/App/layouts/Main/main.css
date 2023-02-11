@@ -1,0 +1,25 @@
+.main {
+  top: -142px;
+  position: relative;
+}
+
+.main__todos {
+  overflow: hidden;
+}
+
+.main__note {
+  font-size: 14px;
+  padding-top: 52px;
+  text-align: center;
+  color: var(--controls-color);
+}
+
+@media (max-width: 767px) {
+  .main {
+    top: -92px;
+  }
+
+  .main__note {
+    padding-top: 44px;
+  }
+}

@@ -1,98 +1,115 @@
-import React from "react";
+import { useState, useEffect } from "react";
+import { useDidUpdateEffect } from "./hooks";
 
 import "./app.css";
 import Header from "./layouts/Header";
 import Main from "./layouts/Main";
 
+const storageKey = "reactTodos";
+
 function App() {
-  const [todos, setTodos] = React.useState([]);
-  const [todosValidation, setTodosValidation] = React.useState(true);
+  // App State
+  const [todo, setTodo] = useState("");
+  const [todos, setTodos] = useState([]);
+  const [errMsg, setErrMsg] = useState("");
+  const [isFiltered, setIsFiltered] = useState(false);
+  const [theme, setTheme] = useState(
+    matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+  );
 
-  React.useEffect(() => {
-    localStorage.reactTodos &&
-      setTodos([...JSON.parse(localStorage.reactTodos)]);
+  // State Changes
+  useEffect(() => {
+    theme === "dark" && document.documentElement.classList.add("dark");
+    localStorage[storageKey] &&
+      setTodos([...JSON.parse(localStorage[storageKey])]);
   }, []);
+  useDidUpdateEffect(() => {
+    !isFiltered && localStorage.setItem(storageKey, JSON.stringify(todos));
+  }, [JSON.stringify(todos)]);
 
-  const createTodo = (todoContent) => {
-    const allContent = todos.map((todo) => todo.todoContent);
-    let todo = {
-      id: Date.now(),
-      todoContent,
-      completed: false,
-    };
+  useEffect(() => void setErrMsg(""), [todo]);
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark");
+  }, [theme]);
 
-    if (todoContent.length) {
-      setTodosValidation(true);
-
-      for (let i = 0; i < allContent.length; i++) {
-        const content = allContent[i];
-
-        if (content === todoContent) {
-          todo = false;
-          setTodosValidation(false);
-          break;
-        } else {
-          setTodosValidation(true);
-        }
+  // Action Handlers
+  const handleChangeTodo = ({ target }) => {
+    setTodo(target.value);
+  };
+  const handleAddTodo = () => {
+    if (todo) {
+      if (!todos.map((todo) => todo.todoTxt).includes(todo)) {
+        setTodos([
+          ...todos,
+          {
+            id: Math.random() * Math.random(),
+            todoTxt: todo,
+            isCompleted: false,
+          },
+        ]);
+        setTodo("");
+      } else {
+        setErrMsg("This todo is already exists");
       }
     } else {
-      todo = false;
-      setTodosValidation(false);
-    }
-
-    return todo;
-  };
-
-  const addTodo = (todoContent) => {
-    const todo = createTodo(todoContent);
-
-    if (todo !== false) {
-      todos.push(todo);
-      setTodos([...todos]);
-      localStorage.setItem("reactTodos", JSON.stringify(todos));
+      setErrMsg("Enter your todo");
     }
   };
-
-  const removeTodo = (todoID) => {
-    const newTodos = todos.filter((todo) => todo.id !== todoID);
-
-    setTodos([...newTodos]);
-    localStorage.setItem("reactTodos", JSON.stringify(newTodos));
+  const handleRemoveTodo = (id) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
   };
-
-  const filterTodos = (todos) => {
-    setTodos([...todos]);
-    localStorage.setItem("reactTodos", JSON.stringify(todos));
+  const handleToggleTodo = (id) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+      )
+    );
   };
+  const handleFilterTodos = ({ target }) => {
+    let filteredTodos = JSON.parse(localStorage[storageKey]) || [];
+    const type = target.innerHTML;
+    setIsFiltered(true);
 
-  const toggleTodo = (todoIndex) => {
-    const completedTodo = todos[todoIndex].completed;
-    todos[todoIndex].completed = !completedTodo;
+    if (type === "completed") {
+      filteredTodos = filteredTodos.filter((todo) => todo.isCompleted);
+    } else if (type === "active") {
+      filteredTodos = filteredTodos.filter((todo) => !todo.isCompleted);
+    } else if (type === "all") {
+      setIsFiltered(false);
+    }
 
-    setTodos([...todos]);
-    localStorage.setItem("reactTodos", JSON.stringify(todos));
+    setTodos(filteredTodos);
+    target.parentElement.querySelector(".active").classList.remove("active");
+    target.classList.add("active");
   };
-
-  const swap = (todo1, i1, todo2, i2) => {
+  const handleSwapTodo = (todo1, i1, todo2, i2) => {
     todos[i1] = todo2;
     todos[i2] = todo1;
-
     setTodos([...todos]);
-    localStorage.setItem("reactTodos", JSON.stringify(todos));
+  };
+  const handleClearCompleted = () => {
+    setTodos(todos.filter((todo) => !todo.isCompleted));
   };
 
   return (
     <>
-      <Header />
+      <Header
+        theme={theme}
+        handleToggleTheme={() => setTheme(theme === "light" ? "dark" : "light")}
+      />
 
       <Main
+        todo={todo}
         todos={todos}
-        todosValidation={todosValidation}
-        addTodo={addTodo}
-        removeTodo={removeTodo}
-        toggleTodo={toggleTodo}
-        swap={swap}
-        filterTodos={filterTodos}
+        errMsg={errMsg}
+        isFiltered={isFiltered}
+        handleAddTodo={handleAddTodo}
+        handleSwapTodo={handleSwapTodo}
+        handleChangeTodo={handleChangeTodo}
+        handleRemoveTodo={handleRemoveTodo}
+        handleToggleTodo={handleToggleTodo}
+        handleFilterTodos={handleFilterTodos}
+        handleClearCompleted={handleClearCompleted}
       />
     </>
   );

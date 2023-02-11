@@ -1,14 +1,15 @@
-import React from "react";
-
-import styles from "./todos.module.css";
 import TodoCheck from "./TodoCheck";
+import styles from "./components.module.css";
 
-export default function Todo({ todo, removeTodo, toggleTodo, index, swap }) {
-  const handleToggleTodo = () => toggleTodo(index);
-
+function Todo({
+  todo,
+  index,
+  handleSwapTodo,
+  handleRemoveTodo,
+  handleToggleTodo,
+}) {
   const handleDragStart = (e, todo, i) => {
     e.target.style.opacity = "0.4";
-
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/plain", JSON.stringify(todo));
     e.dataTransfer.setData("text/html", i);
@@ -22,19 +23,18 @@ export default function Todo({ todo, removeTodo, toggleTodo, index, swap }) {
   };
   const handleDrop = (e, todo, i) => {
     e.stopPropagation();
-    swap(
+    handleSwapTodo(
       JSON.parse(e.dataTransfer.getData("text/plain")),
       e.dataTransfer.getData("text/html"),
       todo,
       i
     );
-
     return false;
   };
 
   return (
     <li
-      className={styles.Todo}
+      className="rect"
       draggable
       onDragStart={(e) => handleDragStart(e, todo, index)}
       onDragEnd={(e) => handleDragEnd(e)}
@@ -42,24 +42,30 @@ export default function Todo({ todo, removeTodo, toggleTodo, index, swap }) {
       onDrop={(e) => handleDrop(e, todo, index)}
     >
       <TodoCheck
-        ariaChecked={todo.completed}
-        ariaLabel="Toggle todo"
-        handleClick={handleToggleTodo}
-        handleKeydown={handleToggleTodo}
+        role="checkbox"
+        aria-checked={todo.isCompleted}
+        onClick={() => handleToggleTodo(todo.id)}
+        aria-label={`Toggle ${todo.todoTxt} todo`}
       />
 
       <p
-        className={`${styles.paragraph} ${todo.completed && styles.completed}`}
-        onClick={handleToggleTodo}
+        onClick={() => handleToggleTodo(todo.id)}
+        className={todo.isCompleted ? styles.completed : ""}
       >
-        {todo.todoContent}
+        {todo.todoTxt}
       </p>
 
       <button
+        type="button"
         className={styles.removeTodo}
-        aria-label="Delete todo"
-        onClick={() => removeTodo(todo.id)}
-      ></button>
+        onClick={() => handleRemoveTodo(todo.id)}
+        aria-label={`Delete ${todo.todoTxt} todo`}
+      >
+        {/* prettier-ignore */}
+        <svg aria-hidden='true' focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18"><path fill="currentColor" fillRule="evenodd" d="M16.97 0l.708.707L9.546 8.84l8.132 8.132-.707.707-8.132-8.132-8.132 8.132L0 16.97l8.132-8.132L0 .707.707 0 8.84 8.132 16.971 0z"/></svg>
+      </button>
     </li>
   );
 }
+
+export default Todo;

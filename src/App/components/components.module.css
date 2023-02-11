@@ -1,0 +1,124 @@
+/*
+  TodoInput
+*/
+
+.TodoInput {
+  position: relative;
+  margin-bottom: 24px;
+}
+.TodoInput [role="alert"] {
+  color: red;
+  font-size: 14px;
+}
+@media (max-width: 767px) {
+  .TodoInput {
+    margin-bottom: 16px;
+  }
+  .TodoInput [role="alert"] {
+    font-size: 12px;
+  }
+}
+.TodoInput input {
+  caret-color: var(--blue);
+}
+.TodoInput ::placeholder {
+  opacity: 0.8;
+}
+
+/*
+  Todo
+*/
+
+.completed {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+.removeTodo {
+  width: 18px;
+  height: 18px;
+}
+@media (max-width: 767px) {
+  .removeTodo {
+    transform: scale(0.725);
+  }
+}
+
+/*
+  TodoCheck
+*/
+
+.TodoCheck {
+  outline: none;
+  min-width: 22px;
+  min-height: 22px;
+  border-radius: 50%;
+  position: relative;
+  transition-duration: 0.3s;
+  border: 1px solid var(--checkbox-color);
+  will-change: border-color, background-image;
+}
+.TodoCheck::after {
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  border-radius: inherit;
+  width: calc(100% - 1px);
+  height: calc(100% - 1px);
+  transform: translate(-50%, -50%);
+  background-color: var(--main-bg);
+}
+
+.TodoCheck:hover,
+.TodoCheck:focus-visible {
+  border-color: transparent;
+  background-image: linear-gradient(
+    120deg,
+    hsl(192, 100%, 67%),
+    hsl(280, 87%, 65%)
+  );
+}
+.TodoCheck:not([aria-checked="true"]):hover::after,
+.TodoCheck:not([aria-checked="true"]):focus-visible::after {
+  content: "";
+}
+
+.TodoCheck[aria-checked="true"] {
+  border-color: transparent;
+  background: url(../images/icon-check.svg) center no-repeat,
+    linear-gradient(120deg, hsl(192, 100%, 67%), hsl(280, 87%, 65%));
+}
+
+/*
+  TodosInfo
+*/
+
+.TodosInfo {
+  height: 50px;
+  font-size: 14px;
+  color: var(--controls-color);
+  justify-content: space-between;
+}
+.TodosInfo > :last-child {
+  flex: initial;
+  font-weight: 400;
+}
+
+/*
+  TodoFilters
+*/
+
+.TodoFilters {
+  column-gap: 20px;
+  justify-content: center;
+}
+@media (max-width: 767px) {
+  .TodoFilters {
+    font-size: 14px;
+    margin-top: 16px;
+  }
+}
+@media (min-width: 768px) {
+  .TodoFilters {
+    position: relative;
+  }
+}
