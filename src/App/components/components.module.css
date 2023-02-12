@@ -34,7 +34,7 @@
   height: inherit;
   align-items: center;
 }
-.todoTxt.completed {
+.completed {
   opacity: 0.6;
   text-decoration: line-through;
 }
