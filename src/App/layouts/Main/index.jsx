@@ -8,7 +8,8 @@ function Main({
   todo,
   todos,
   errMsg,
-  isFiltered,
+  filter,
+  filteredTodos,
   handleAddTodo,
   handleSwapTodo,
   handleRemoveTodo,
@@ -17,7 +18,8 @@ function Main({
   handleFilterTodos,
   handleClearCompleted,
 }) {
-  const isRender = isFiltered || todos.length;
+  const isRender = filter || todos.length;
+  const shownTodos = filter ? filteredTodos : todos;
 
   return (
     <main className="main">
@@ -32,8 +34,8 @@ function Main({
 
         {/* Todo List */}
         <ul className="main__todos | rounded shadow">
-          {todos.length ? (
-            todos.map((todo, i) => (
+          {shownTodos.length ? (
+            shownTodos.map((todo, i) => (
               <Todo
                 key={todo.id}
                 index={i}

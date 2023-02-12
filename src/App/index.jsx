@@ -12,7 +12,8 @@ function App() {
   const [todo, setTodo] = useState("");
   const [todos, setTodos] = useState([]);
   const [errMsg, setErrMsg] = useState("");
-  const [isFiltered, setIsFiltered] = useState(false);
+  const [filter, setFilter] = useState(null);
+  const [filteredTodos, setFilteredTodos] = useState([]);
   const [theme, setTheme] = useState(
     matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
   );
@@ -23,9 +24,17 @@ function App() {
     localStorage[storageKey] &&
       setTodos([...JSON.parse(localStorage[storageKey])]);
   }, []);
+
   useDidUpdateEffect(() => {
-    !isFiltered && localStorage.setItem(storageKey, JSON.stringify(todos));
+    localStorage.setItem(storageKey, JSON.stringify(todos));
   }, [JSON.stringify(todos)]);
+  useEffect(() => {
+    if (filter === "active") {
+      setFilteredTodos(todos.filter((todo) => !todo.isCompleted));
+    } else if (filter === "completed") {
+      setFilteredTodos(todos.filter((todo) => todo.isCompleted));
+    }
+  }, [JSON.stringify(todos), filter]);
 
   useEffect(() => void setErrMsg(""), [todo]);
   useEffect(() => {
@@ -66,26 +75,20 @@ function App() {
     );
   };
   const handleFilterTodos = ({ target }) => {
-    let filteredTodos = JSON.parse(localStorage[storageKey]) || [];
-    const type = target.innerHTML;
-    setIsFiltered(true);
+    const type = target.innerHTML !== "all" ? target.innerHTML : null;
+    setFilter(type);
 
-    if (type === "completed") {
-      filteredTodos = filteredTodos.filter((todo) => todo.isCompleted);
-    } else if (type === "active") {
-      filteredTodos = filteredTodos.filter((todo) => !todo.isCompleted);
-    } else if (type === "all") {
-      setIsFiltered(false);
-    }
-
-    setTodos(filteredTodos);
     target.parentElement.querySelector(".active").classList.remove("active");
     target.classList.add("active");
   };
   const handleSwapTodo = (todo1, i1, todo2, i2) => {
-    todos[i1] = todo2;
-    todos[i2] = todo1;
-    setTodos([...todos]);
+    const [swappedTodos, setSwappedTodos] = filter
+      ? [filteredTodos, setFilteredTodos]
+      : [todos, setTodos];
+
+    swappedTodos[i1] = todo2;
+    swappedTodos[i2] = todo1;
+    setSwappedTodos([...swappedTodos]);
   };
   const handleClearCompleted = () => {
     setTodos(todos.filter((todo) => !todo.isCompleted));
@@ -102,7 +105,8 @@ function App() {
         todo={todo}
         todos={todos}
         errMsg={errMsg}
-        isFiltered={isFiltered}
+        filter={filter}
+        filteredTodos={filteredTodos}
         handleAddTodo={handleAddTodo}
         handleSwapTodo={handleSwapTodo}
         handleChangeTodo={handleChangeTodo}
