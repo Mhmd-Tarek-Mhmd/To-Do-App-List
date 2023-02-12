@@ -135,8 +135,8 @@ html.dark {
 .rect {
   height: 64px;
   display: flex;
-  padding: 20px 24px;
   align-items: center;
+  padding-inline: 24px;
   background-color: var(--main-bg);
   -moz-column-gap: 24px;
   column-gap: 24px;
@@ -144,7 +144,7 @@ html.dark {
 @media (max-width: 767px) {
   .rect {
     height: 53px;
-    padding: 16px 20px;
+    padding-inline: 20px;
     -moz-column-gap: 12px;
     column-gap: 12px;
   }
