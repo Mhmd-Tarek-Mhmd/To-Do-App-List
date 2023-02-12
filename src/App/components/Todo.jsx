@@ -45,12 +45,16 @@ function Todo({
         role="checkbox"
         aria-checked={todo.isCompleted}
         onClick={() => handleToggleTodo(todo.id)}
-        aria-label={`Toggle ${todo.todoTxt} todo`}
+        aria-label={`Set ${todo.todoTxt} todo as ${
+          todo.isCompleted ? "active" : "completed"
+        }`}
       />
 
       <p
         onClick={() => handleToggleTodo(todo.id)}
-        className={todo.isCompleted ? styles.completed : ""}
+        className={`${styles.todoTxt} ${
+          todo.isCompleted ? styles.completed : ""
+        }`}
       >
         {todo.todoTxt}
       </p>
